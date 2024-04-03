@@ -1,6 +1,6 @@
 ---
 - name: Set up a self-hosted server
-  hosts: localhost
+  hosts: octo-local
   become: false
   tasks:
     - name: Pull latest changes from Git repository
@@ -101,3 +101,57 @@
       tags:
         - setup
       when: "'install' not in ansible_run_tags and 'setup' in ansible_run_tags"
+
+    - name: Execute curl command to login and get access token
+      uri:
+        url: "http://localhost:3000/api/auth/login"
+        method: POST
+        body_format: json
+        body:
+          auth: "{{ sem_admin }}"
+          password: "{{ sem_password }}"
+        headers:
+          Content-Type: "application/json"
+          Accept: "application/json"
+        return_content: yes
+        status_code: 200
+      register: login_response
+
+    - set_fact:
+        access_token: "{{ (login_response.json | json_query('[0].id') ) }}"
+
+    - debug:
+        var: access_token
+
+    - name: Execute curl command to get user tokens
+      uri:
+        url: "http://localhost:3000/api/user/tokens"
+        method: GET
+        headers:
+          Content-Type: "application/json"
+          Accept: "application/json"
+          Cookie: "semaphore-cookie={{ login_response.cookies['/']['semaphore-cookie'] }}"
+        return_content: yes
+        status_code: 200
+      register: user_tokens_response
+
+    - debug:
+        var: user_tokens_response.json
+
+#    - name: Execute curl command to create project task
+#      uri:
+#        url: "http://localhost:3000/api/project/1/tasks"
+#        method: POST
+#        body_format: json
+#        body:
+#          template_id: 1
+#        headers:
+#          Content-Type: "application/json"
+#          Accept: "application/json"
+#          Authorization: "Bearer {{ access_token }}"
+#        return_content: yes
+#        status_code: 200
+#      register: create_project_task_response
+#
+#    - debug:
+#        var: create_project_task_response.json
