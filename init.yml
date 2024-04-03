@@ -1,6 +1,6 @@
 ---
 - name: Set up a self-hosted server
-  hosts: localhost
+  hosts: all
   tasks:
     - name: Pull latest changes from Git repository
       shell: "git --work-tree={{ playbook_dir }} --git-dir={{ playbook_dir }}/.git pull"
@@ -24,7 +24,7 @@
       delegate_to: localhost
 
     - name: Run 'just optimize-reset'
-      command: just optimize-reset
+      command: /usr/bin/just optimize-reset
       args:
         chdir: "{{ playbook_dir }}"
       register: optimize_output
@@ -34,7 +34,7 @@
       delegate_to: localhost
 
     - name: Run 'just optimize'
-      command: just optimize
+      command: /usr/bin/just optimize
       args:
         chdir: "{{ playbook_dir }}"
       register: optimize_output
@@ -52,7 +52,7 @@
       delegate_to: localhost
 
     - name: Run 'just roles'
-      command: just roles
+      command: /usr/bin/just roles
       args:
         chdir: "{{ playbook_dir }}"
       register: roles_output
@@ -70,7 +70,7 @@
       delegate_to: localhost
 
     - name: Run 'just install-all'
-      command: just install-all
+      command: /usr/bin/just install-all
       args:
         chdir: "{{ playbook_dir }}"
       register: install_output
@@ -88,7 +88,7 @@
       delegate_to: localhost
 
     - name: Run 'just setup-all'
-      command: just setup-all
+      command: /usr/bin/just setup-all
       args:
         chdir: "{{ playbook_dir }}"
       register: setup_output
