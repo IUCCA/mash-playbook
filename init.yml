@@ -1,6 +1,6 @@
 ---
 - name: Set up a self-hosted server
-  hosts: octo-local
+  hosts: localhost
   become: false
   tasks:
     - name: Pull latest changes from Git repository
