@@ -1,5 +1,6 @@
 ---
 - name: Set up a self-hosted server
+  hosts: localhost
   tasks:
     - name: Pull latest changes from Git repository
       shell: "git --work-tree={{ playbook_dir }} --git-dir={{ playbook_dir }}/.git pull"
